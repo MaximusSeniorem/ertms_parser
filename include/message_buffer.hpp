@@ -4,12 +4,12 @@
 
 const uint64_t mask = 0xffffffffffffffff;
 
-template <size_t N>
+template <std::size_t N>
 struct MessageBuffer{
     public:
 
     private:
-    uint8_t buffer[N];
+    std::byte buffer[N];
 };
 
 
