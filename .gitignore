@@ -10,5 +10,5 @@ compile_commands.json
 CTestTestfile.cmake
 _deps
 test
-.vscode/settings.json
-config/config.hpp
+.vscode
+build/*
