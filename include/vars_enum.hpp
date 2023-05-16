@@ -1,4 +1,5 @@
 #pragma once
+
 enum {
     A_NVMAXREDADH = 0,
     A_NVP,

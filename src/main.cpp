@@ -20,15 +20,15 @@ void print_array(std::span<std::byte> arr)
 
 //bitbuffers
 struct bitbuffer{
-    bitbuffer(std::span<std::byte> buf) : m_buf{buf.data()}, m_size{buf.size()}, m_offset{0} {}
+    bitbuffer(std::span<std::byte> buf) : m_buf{buf}, m_bsize{buf.size() * CHAR_BIT}, m_offset{0} {}
 
     virtual ~bitbuffer() = default;
 
     std::size_t size(){ return (m_offset%CHAR_BIT == 0) ? m_offset/CHAR_BIT : m_offset/CHAR_BIT + 1; }
 
 protected:
-    std::byte* m_buf;
-    std::size_t m_size;
+    std::span<std::byte> m_buf;
+    std::size_t m_bsize;
     std::size_t m_offset;
 };
 
@@ -46,7 +46,7 @@ struct ibitstream : bitbuffer{
         auto val_ptr = std::as_writable_bytes(std::span{&val, 1}); 
         
         //oob
-        if(this->m_offset + val_len >= this->m_size * CHAR_BIT){
+        if(this->m_offset + val_len >= this->m_bsize * CHAR_BIT){
             //hande buffer read oob error, throws(--) or internal error at buffer level
             return *this;
         }
@@ -83,7 +83,7 @@ struct obitstream : bitbuffer{
         auto val_ptr = std::as_bytes(std::span{&val_shifted, 1});
 
         //buffer overflow
-        if(this->m_offset + val_len >= this->m_size * CHAR_BIT){
+        if(this->m_offset + val_len >= this->m_bsize * CHAR_BIT){
             //hande buffer overflow error, throws(--) or internal error at buffer level
             return *this;
         }
@@ -202,6 +202,7 @@ int main (int argc, char** argv)
     t2.m_val = 0xffffffff;
     var<uint64_t, 36> t3;
     t3.m_val = 0x1ffffff;
+    
     obitstream obb1(buf);
     t.write(obb1);
     t1.write(obb1);
