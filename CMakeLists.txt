@@ -9,5 +9,6 @@ add_subdirectory(config)
 
 add_executable(test src/main.cpp)
 
+
 #move it to src ?
 target_include_directories(test PRIVATE "${CMAKE_BINARY_DIR}/config" PUBLIC "include")
