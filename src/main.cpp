@@ -1,4 +1,5 @@
 #include <iostream>
+#include <iomanip>
 #include <cassert>
 #include <cstdint>
 #include <climits>
@@ -13,12 +14,16 @@
 void print_array(std::span<std::byte> arr)
 {
     for (auto i : arr){
-        std::cout << std::bitset<8>(std::to_integer<int>(i)) << ' ';
+        std::cout << std::bitset<8>(std::to_integer<int>(i));
         //std::cout << std::hex << std::to_integer<int>(i) << ' ';
     }
     std::cout << '\n';
 }
 
+template <std::unsigned_integral T, std::size_t sz>
+void binany_print(T val){
+    std::cout << std::bitset<sz>(val);
+}
 
 //elements, i.e. var, packets, messages
 struct abstract_elem
@@ -37,7 +42,7 @@ struct var : abstract_elem
     var(T _val) : m_val(_val) {}
     var() : var(0) {}
 
-    void write(bb::obitstream& obb) 
+    void write(bb::obitstream& obb)  
     {
         obb.write(m_val, m_len);
     }
@@ -88,10 +93,12 @@ int main (int argc, char** argv)
     uint16_t j1 = 0x01FA;
     uint16_t j2 = 0x7FFe;
     uint16_t j3 = 0x01FF;
-    
+
     obb.write(j1, 10)
        .write(j2, 15)
        .write(j3, 10);
+
+    std::cout << '\n';
     print_array(buf);
     std::cout << '\n';
 
