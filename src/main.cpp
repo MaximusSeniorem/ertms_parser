@@ -8,7 +8,7 @@
 #include <concepts>
 #include <cstddef>
 #include <span>
-#include "bit_buffers.hpp"
+#include "bit_buffers/bit_buffers.hpp"
 
 //utils
 void print_array(std::span<std::byte> arr)
