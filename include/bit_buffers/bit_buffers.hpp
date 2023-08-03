@@ -44,21 +44,19 @@ namespace bb{
 
             const std::size_t buf_idx = this->m_offset / CHAR_BIT;
             std::size_t buf_shift = this->m_offset % CHAR_BIT;
+            T *buf = (T*) &this->m_buf[buf_idx];
+            
+            val = *buf;
 
             const std::size_t t_sz = sizeof(T);
             const std::uint8_t t_len = t_sz * CHAR_BIT;
             auto val_ptr = std::as_writable_bytes(std::span{&val, 1});
-        
-            for (auto i = 0; i < t_sz; ++i){
-                val_ptr[i] = this->m_buf[i + buf_idx];
-            }
 
             std::size_t val_last_index = t_sz - 1;
             if constexpr (std::endian::native == std::endian::little){
                 val = std::byteswap(val);
                 val_last_index = 0;
             }
-
 
             val <<= buf_shift;
             val >>= (t_len - val_len);
@@ -81,7 +79,7 @@ namespace bb{
 
         template <typename T>
         obitstream& write(T val, std::size_t val_len){
-            //buffer overflow
+            //oob
             if(this->m_offset + val_len >= this->m_bsize){
                 //hande buffer overflow error, throws(--) or internal error at buffer level
                 return *this;
@@ -92,6 +90,7 @@ namespace bb{
 
             const std::size_t t_sz = sizeof(T);
             const std::size_t t_len = t_sz * CHAR_BIT;
+            T * buf = (T *)&this->m_buf[buf_idx];
 
             T val_shifted = val << (t_len - val_len);
             auto val_ptr = std::as_bytes(std::span{&val_shifted, 1});
@@ -105,11 +104,8 @@ namespace bb{
                 val_shifted = std::byteswap(val_shifted);
                 last_index = 0;
             }
-
-            /* copy on buffer */
-            for (auto i = 0; i < t_sz; ++i){
-                this->m_buf[buf_idx + i] |= val_ptr[i];
-            }
+            
+            *buf |= val_shifted;
 
             //check if there's bits left to write
             buf_shift = buf_shift + val_len - t_len;
