@@ -44,13 +44,11 @@ namespace bb{
 
             const std::size_t buf_idx = this->m_offset / CHAR_BIT;
             std::size_t buf_shift = this->m_offset % CHAR_BIT;
-            T *buf = (T*) &this->m_buf[buf_idx];
-            
-            val = *buf;
+
+            val = *reinterpret_cast<T *>(&(this->m_buf[buf_idx]));
 
             const std::size_t t_sz = sizeof(T);
             const std::uint8_t t_len = t_sz * CHAR_BIT;
-            auto val_ptr = std::as_writable_bytes(std::span{&val, 1});
 
             std::size_t val_last_index = t_sz - 1;
             if constexpr (std::endian::native == std::endian::little){
@@ -58,13 +56,17 @@ namespace bb{
                 val_last_index = 0;
             }
 
+            /* left align to get rid of extra bits from previous data */
             val <<= buf_shift;
+            /* set val correctly */
             val >>= (t_len - val_len);
 
             //check if there's bits left to read
             buf_shift = buf_shift + val_len - t_len;
-            if(buf_shift > 0)
+            if(buf_shift > 0){
+                auto val_ptr = std::as_writable_bytes(std::span{&val, 1});
                 val_ptr[val_last_index] |= this->m_buf[t_sz + buf_idx] >> (CHAR_BIT - buf_shift);
+            }
             
             this->m_offset += val_len;
             return *this;
@@ -90,10 +92,8 @@ namespace bb{
 
             const std::size_t t_sz = sizeof(T);
             const std::size_t t_len = t_sz * CHAR_BIT;
-            T * buf = (T *)&this->m_buf[buf_idx];
 
             T val_shifted = val << (t_len - val_len);
-            auto val_ptr = std::as_bytes(std::span{&val_shifted, 1});
 
             /* apply buffer shift */
             val_shifted >>= buf_shift;
@@ -105,12 +105,13 @@ namespace bb{
                 last_index = 0;
             }
             
-            *buf |= val_shifted;
+            *reinterpret_cast<T *>(&this->m_buf[buf_idx]) |= val_shifted;
 
             //check if there's bits left to write
             buf_shift = buf_shift + val_len - t_len;
             if (buf_shift > 0){
                 val_shifted = val << CHAR_BIT - buf_shift;
+                auto val_ptr = std::as_bytes(std::span{&val_shifted, 1});
                 this->m_buf[t_sz + buf_idx] |= val_ptr[last_index];
             }
         
