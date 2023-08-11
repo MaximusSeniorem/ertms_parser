@@ -4,13 +4,12 @@ project(test VERSION 0.1.0 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-find_package(Catch2 REQUIRED)
+find_package(Catch2 3 REQUIRED)
 
 # configure files based on CMake configuration options
 add_subdirectory(config)
 
-add_executable(test src/main.cpp)
+add_executable(test test/test_main.cpp)
+target_link_libraries(test Catch2::Catch2WithMain)
 
-
-#move it to src ?
-target_include_directories(test PRIVATE "${CMAKE_BINARY_DIR}/config" PUBLIC "include")
+#target_include_directories(test PRIVATE "${CMAKE_BINARY_DIR}/config" PUBLIC "include")

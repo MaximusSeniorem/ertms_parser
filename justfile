@@ -1,12 +1,11 @@
 all: configure test run
 
-coninstall:
-    conan install . --output-folder=build --build=missing
 
 configure:
     #!/usr/bin/bash
-    mkdir -p build
-    cmake -B build
+    conan install . --output-folder=build --build=missing
+    (cd build; cmake .. -DCMAKE_TOOLCHAIN_FILE=conan_toolchain.cmake -DCMAKE_BUILD_TYPE=Release)
+
 
 test:
     cmake --build build
