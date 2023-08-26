@@ -14,7 +14,7 @@ namespace bb{
         
         virtual ~bitbuffer() = default;
 
-        constexpr std::size_t bit_size() { 
+        constexpr std::size_t size() { 
             return (m_offset%CHAR_BIT == 0) ? m_offset/CHAR_BIT : m_offset/CHAR_BIT + 1;
         }  
         

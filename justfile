@@ -9,6 +9,7 @@ configure:
 test:
     cmake --build build 
     ./build/test
+    ./build/main
 
 clean:
     rm -rf build

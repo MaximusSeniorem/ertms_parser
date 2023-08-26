@@ -13,3 +13,8 @@ find_package(Catch2 3 REQUIRED)
 add_executable(test test/test_main.cpp test/bit_buffers/bit_buffers_test.cpp)
 target_include_directories(test PRIVATE "${CMAKE_BINARY_DIR}/config" PUBLIC "include")
 target_link_libraries(test PRIVATE Catch2::Catch2WithMain)
+
+
+project(main VERSION 0.1.0 LANGUAGES CXX)
+add_executable(main src/main.cpp)
+target_include_directories(main PRIVATE "${CMAKE_BINARY_DIR}/config" PUBLIC "include")
