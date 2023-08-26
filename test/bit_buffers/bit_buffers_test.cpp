@@ -6,7 +6,7 @@
 #include "catch2/catch_test_macros.hpp"
 
 
-std::size_t sz_arr = 20
+const std::size_t sz_arr = 20;
 std::array<std::byte, sz_arr> buf{};
 bb::obitstream obs(buf);
 

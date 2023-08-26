@@ -17,4 +17,4 @@ target_link_libraries(test PRIVATE Catch2::Catch2WithMain)
 
 project(main VERSION 0.1.0 LANGUAGES CXX)
 add_executable(main src/main.cpp)
-target_include_directories(main PRIVATE "${CMAKE_BINARY_DIR}/config" PUBLIC "include")
+target_include_directories(main PRIVATE "${CMAKE_BINARY_DIR}/config" PUBLIC "${CMAKE_CURRENT_LIST_DIR}/include")
