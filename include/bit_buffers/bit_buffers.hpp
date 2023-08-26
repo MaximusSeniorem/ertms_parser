@@ -1,7 +1,7 @@
 #pragma once
 
 #include <climits>
-#include <cstdint>
+#include <cstddef>
 #include <span>
 #include <bit>
 
@@ -48,7 +48,7 @@ namespace bb{
             val = *reinterpret_cast<T *>(&(this->m_buf[buf_idx]));
 
             const std::size_t t_sz = sizeof(T);
-            const std::uint8_t t_len = t_sz * CHAR_BIT;
+            const std::size_t t_len = t_sz * CHAR_BIT;
 
             std::size_t val_last_index = t_sz - 1;
             if constexpr (std::endian::native == std::endian::little){
