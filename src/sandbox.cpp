@@ -9,21 +9,8 @@
 #include <cstddef>
 #include <span>
 #include "bit_buffers/bit_buffers.hpp"
+#include "utils.hpp"
 
-//utils
-void print_array(std::span<std::byte> arr)
-{
-    for (auto i : arr){
-        std::cout << std::bitset<8>(std::to_integer<int>(i));
-        //std::cout << std::hex << std::to_integer<int>(i) << ' ';
-    }
-    std::cout << '\n';
-}
-
-template <std::unsigned_integral T, std::size_t sz>
-void binany_print(T val){
-    std::cout << std::bitset<sz>(val);
-}
 
 //elements, i.e. var, packets, messages
 struct abstract_elem
@@ -99,7 +86,7 @@ int main (int argc, char** argv)
        .write(j3, 10);
 
     std::cout << '\n';
-    print_array(buf);
+    utils::print_array(buf, std::cout);
     std::cout << '\n';
 
     uint16_t j_out;
@@ -131,7 +118,7 @@ int main (int argc, char** argv)
     PacketTest p(15, 10);
     p.write(obb1);
     
-    print_array(buf);
+    utils::print_array(buf, std::cout);
     std::cout << '\n';
     
     bb::obitstream obb2(buf);
@@ -140,7 +127,7 @@ int main (int argc, char** argv)
     for(auto e : ae_array){
         e->write(obb2);
     }
-    print_array(buf);
+    utils::print_array(buf, std::cout);
     
     bb::ibitstream ibb2(buf);
     var<uint8_t, 6> tb;

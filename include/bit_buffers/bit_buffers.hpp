@@ -18,6 +18,10 @@ namespace bb{
             return (m_offset%CHAR_BIT == 0) ? m_offset/CHAR_BIT : m_offset/CHAR_BIT + 1;
         }  
         
+        constexpr std::size_t offset() { 
+            return m_offset;
+        }  
+        
         constexpr std::size_t bit_capacity() { 
             return m_bsize;
         }

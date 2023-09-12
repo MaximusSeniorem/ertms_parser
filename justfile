@@ -1,4 +1,4 @@
-default: build
+default: test
 
 config:
     rm -rf build
@@ -12,6 +12,10 @@ build:
 
 test: build
     ./build/parser_tests
+
+
+sandbox: build
+    ./build/sandbox
 
 clean:
     rm -rf build
