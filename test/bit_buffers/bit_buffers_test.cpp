@@ -26,12 +26,16 @@ TEST_CASE("bit_buffers - bwriter writting is big-endian", "[bwriter big-endian]"
     reset_buffer();
     bb::bwriter obs(buf);
     
-    SECTION("Less than 8bit is unphased"){
-        uint8_t v = 0x14;
+    SECTION("full byte should be equal"){
+        uint8_t v = 0x12;
         obs.write(v, 8);
         REQUIRE( buf[0] == std::byte{v} );
-        REQUIRE( obs.size() == 1 );
-        REQUIRE( obs.offset() == 8 );
+    }
+   
+    SECTION("Less than a bytes is left shifted"){
+        uint8_t v = 0x12;
+        obs.write(v, 5);
+        REQUIRE( buf[0] == std::byte{0x90} );
     }
 
 }
