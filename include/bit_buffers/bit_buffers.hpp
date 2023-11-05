@@ -33,13 +33,13 @@ namespace bb{
     };
 
 
-    struct ibitstream : bitbuffer{
-        ibitstream(std::span<std::byte> buf) :
+    struct breader : bitbuffer{
+        breader(std::span<std::byte> buf) :
             bitbuffer(buf) 
         {}
 
         template <typename T>
-        ibitstream& read(T & val, std::size_t val_len){
+        breader& read(T & val, std::size_t val_len){
             //oob
             if(this->m_offset + val_len >= this->m_bsize){
                 //hande buffer read oob error, throws(--) or internal error at buffer level
@@ -78,13 +78,13 @@ namespace bb{
     };
 
 
-    struct obitstream : bitbuffer{
-        obitstream(std::span<std::byte> buf) :
+    struct bwriter : bitbuffer{
+        bwriter(std::span<std::byte> buf) :
             bitbuffer(buf)
         {}
 
         template <typename T>
-        obitstream& write(T val, std::size_t val_len){
+        bwriter& write(T val, std::size_t val_len){
             //oob
             if(this->m_offset + val_len >= this->m_bsize){
                 //hande buffer overflow error, throws(--) or internal error at buffer level

@@ -16,8 +16,8 @@
 struct abstract_elem
 {
     virtual ~abstract_elem() = default;
-    virtual void write(bb::obitstream& obb) = 0;
-    virtual void read(bb::ibitstream& ibb) = 0; 
+    virtual void write(bb::bwriter& obb) = 0;
+    virtual void read(bb::breader& ibb) = 0; 
 
 };
 
@@ -29,12 +29,12 @@ struct var : abstract_elem
     var(T _val) : m_val(_val) {}
     var() : var(0) {}
 
-    void write(bb::obitstream& obb)  
+    void write(bb::bwriter& obb)  
     {
         obb.write(m_val, m_len);
     }
     
-    void read(bb::ibitstream& ibb) 
+    void read(bb::breader& ibb) 
     {
         T tmp_val;
         ibb.read(tmp_val, m_len);
@@ -55,13 +55,13 @@ struct PacketTest : abstract_elem
     PacketTest() : type(0), length(0) {}
     PacketTest(uint8_t _t, uint16_t _l) : type(_t), length(_l) {}
 
-    void write(bb::obitstream& obb)
+    void write(bb::bwriter& obb)
     {
         type.write(obb);
         length.write(obb);
     }
     
-    void read(bb::ibitstream& ibb) 
+    void read(bb::breader& ibb) 
     {
         type.read(ibb);
         length.read(ibb);
@@ -73,7 +73,7 @@ int main (int argc, char** argv)
 {
     const std::size_t buf_sz = 6;
     std::array<std::byte, 20> buf{};
-    bb::obitstream obb(buf);
+    bb::bwriter obb(buf);
     
     std::cout << '\n';
 
@@ -90,7 +90,7 @@ int main (int argc, char** argv)
     std::cout << '\n';
 
     uint16_t j_out;
-    bb::ibitstream ibb(buf);
+    bb::breader ibb(buf);
 
     ibb.read(j_out, 10);
     assert(j_out == j1);
@@ -109,7 +109,7 @@ int main (int argc, char** argv)
     var<uint64_t, 36> t3;
     t3.m_val = 0x1ffffff;
     
-    bb::obitstream obb1(buf);
+    bb::bwriter obb1(buf);
     t.write(obb1);
     t1.write(obb1);
     t2.write(obb1);
@@ -121,7 +121,7 @@ int main (int argc, char** argv)
     utils::print_array(buf, std::cout);
     std::cout << '\n';
     
-    bb::obitstream obb2(buf);
+    bb::bwriter obb2(buf);
     std::array<abstract_elem *, 5> ae_array = {&t,&t1,&t2,&t3,&p};
 
     for(auto e : ae_array){
@@ -129,7 +129,7 @@ int main (int argc, char** argv)
     }
     utils::print_array(buf, std::cout);
     
-    bb::ibitstream ibb2(buf);
+    bb::breader ibb2(buf);
     var<uint8_t, 6> tb;
     var<uint16_t, 15> t1b;
     var<uint32_t, 32> t2b;

@@ -13,18 +13,18 @@ void reset_buffer(){
     buf.fill(std::byte{0});
 }
 
-TEST_CASE("bit_buffers - obitstream initialisation", "[obitstream init]"){
+TEST_CASE("bit_buffers - bwriter initialisation", "[bwriter init]"){
     reset_buffer();
-    bb::obitstream obs(buf);
+    bb::bwriter obs(buf);
 
-    REQUIRE( obs.bit_capacity() == 20 * CHAR_BIT );
+    REQUIRE( obs.bit_capacity() == arr_sz * CHAR_BIT );
     REQUIRE( obs.size() == 0 );
     REQUIRE( obs.offset() == 0 );
 }
 
-TEST_CASE("bit_buffers - obitstream writting is big-endian", "[obitstream big-endian]"){
+TEST_CASE("bit_buffers - bwriter writting is big-endian", "[bwriter big-endian]"){
     reset_buffer();
-    bb::obitstream obs(buf);
+    bb::bwriter obs(buf);
     
     SECTION("Less than 8bit is unphased"){
         uint8_t v = 0x14;

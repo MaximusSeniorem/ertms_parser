@@ -1,0 +1,8 @@
+- extend tests for bit buffer reader and writers
+- strategy for message encoding and decoding
+- messages datastructure definition
+- validation schema, xsd or json ?
+- base64 compliant
+- setup a request api, plain -> hex/base64 and hex->hex64 to plain
+- structured display
+- graphic hmi / web
