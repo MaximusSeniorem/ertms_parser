@@ -11,8 +11,8 @@ namespace bb{
         bitbuffer(std::span<std::byte> buf) : 
             m_buf{buf}, m_bsize{buf.size() * CHAR_BIT}, m_offset{0} 
         {}
-        
-        virtual ~bitbuffer() = default;
+
+        virtual ~bitbuffer() = 0;
 
         constexpr std::size_t size() { 
             return (m_offset%CHAR_BIT == 0) ? m_offset/CHAR_BIT : m_offset/CHAR_BIT + 1;
@@ -32,6 +32,7 @@ namespace bb{
         std::size_t m_offset;
     };
 
+    bitbuffer::~bitbuffer() = default;
 
     struct breader : bitbuffer{
         breader(std::span<std::byte> buf) :
@@ -42,7 +43,7 @@ namespace bb{
         breader& read(T & val, std::size_t val_len){
             //oob
             if(this->m_offset + val_len >= this->m_bsize){
-                //hande buffer read oob error, throws(--) or internal error at buffer level
+                //handle buffer read oob error, throws(--) or internal error at buffer level
                 return *this;
             }
 
@@ -65,7 +66,7 @@ namespace bb{
             /* set val correctly */
             val >>= (t_len - val_len);
 
-            //check if there's bits left to read
+            //check if there are bits left to read
             buf_shift = buf_shift + val_len - t_len;
             if(buf_shift > 0){
                 auto val_ptr = std::as_writable_bytes(std::span{&val, 1});
@@ -75,6 +76,8 @@ namespace bb{
             this->m_offset += val_len;
             return *this;
         }
+
+        ~breader() override = default;
     };
 
 
@@ -87,7 +90,7 @@ namespace bb{
         bwriter& write(T val, std::size_t val_len){
             //oob
             if(this->m_offset + val_len >= this->m_bsize){
-                //hande buffer overflow error, throws(--) or internal error at buffer level
+                //handle buffer overflow error, throws(--) or internal error at buffer level
                 return *this;
             }
 
@@ -111,10 +114,10 @@ namespace bb{
             
             *reinterpret_cast<T *>(&this->m_buf[buf_idx]) |= val_shifted;
 
-            //check if there's bits left to write
+            //check if there are bits left to write
             buf_shift = buf_shift + val_len - t_len;
             if (buf_shift > 0){
-                val_shifted = val << CHAR_BIT - buf_shift;
+                val_shifted = val << (CHAR_BIT - buf_shift);
                 auto val_ptr = std::as_bytes(std::span{&val_shifted, 1});
                 this->m_buf[t_sz + buf_idx] |= val_ptr[last_index];
             }
@@ -123,5 +126,7 @@ namespace bb{
 
             return *this;
         }
+
+        ~bwriter() override = default;
     };
 }
