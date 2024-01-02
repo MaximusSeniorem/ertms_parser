@@ -42,7 +42,7 @@ namespace bb{
         template <typename T>
         breader& read(T & val, std::size_t val_len){
             //oob
-            if(this->m_offset + val_len >= this->m_bsize){
+            if(this->m_offset + val_len > this->m_bsize){
                 //handle buffer read oob error, throws(--) or internal error at buffer level
                 return *this;
             }
@@ -89,7 +89,7 @@ namespace bb{
         template <typename T>
         bwriter& write(T val, std::size_t val_len){
             //oob
-            if(this->m_offset + val_len >= this->m_bsize){
+            if(this->m_offset + val_len > this->m_bsize){
                 //handle buffer overflow error, throws(--) or internal error at buffer level
                 return *this;
             }
